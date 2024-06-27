@@ -36,19 +36,16 @@ import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
-import { Product } from "app/models/Product/Product"
+import { Product } from "app/models/ProductList/Product"
 
 const ICON_SIZE = 14
 
-const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
+// const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
 
 export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer(
   function DemoPodcastListScreen(_props) {
     const { productStore } = useStores()
-
+    const navigation = _props.navigation
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
 
@@ -57,6 +54,7 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
       ;(async function load() {
         setIsLoading(true)
         await productStore.fetchProducts()
+
         setIsLoading(false)
       })()
     }, [productStore])
@@ -79,7 +77,7 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
           data={productStore.products}
           extraData={productStore.favorites.length + productStore.products.length}
           refreshing={refreshing}
-          estimatedItemSize={177}
+          estimatedItemSize={200}
           onRefresh={manualRefresh}
           ListEmptyComponent={
             isLoading ? (
@@ -130,7 +128,9 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
               product={item}
               // isFavorite={productStore.hasFavorite(item)}
               isFavorite={false}
-              onPressFavorite={() => productStore.toggleFavorite(item)}
+              onPressFavorite={() => {
+                navigation.push("ProductDetails", { id: item.id })
+              }}
             />
           )}
         />
@@ -263,9 +263,10 @@ const ProductCard = observer(function ProductCard({
       RightComponent={
         <Image
           source={{
-            uri: "https://www.mumzworld.com/media/catalog/product/cache/8bf0fdee44d330ce9e3c910273b66bb2/p/g/pgt-std_rambler-globet-totter-tumble-the-rambler-playmat-1644490214.jpg",
+            uri: product.small_image.url,
           }}
           style={$itemThumbnail}
+          // style={{ resizeMode: "cover", width: 20, height: 20 }}
         />
       }
       FooterComponent={
@@ -321,6 +322,8 @@ const $itemThumbnail: ImageStyle = {
   marginTop: spacing.sm,
   borderRadius: 50,
   alignSelf: "flex-start",
+  height: 50,
+  width: 50,
 }
 
 const $toggle: ViewStyle = {

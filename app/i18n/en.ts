@@ -45,7 +45,8 @@ const en = {
     componentsTab: "Components",
     debugTab: "Debug",
     communityTab: "Community",
-    productListTab: "Product",
+    productListTab: "Products",
+    product: "Product",
   },
   demoCommunityScreen: {
     title: "Connect with the community",

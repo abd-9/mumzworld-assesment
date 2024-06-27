@@ -9,6 +9,7 @@ import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../scr
 import { ProductListScreen } from "../screens/DemoPodcastListScreen"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
+import { ProductDetailsScreen } from "app/screens/ProductDetails"
 
 export type DemoTabParamList = {
   DemoCommunity: undefined
@@ -16,6 +17,7 @@ export type DemoTabParamList = {
   DemoDebug: undefined
   DemoPodcastList: undefined
   ProductList: undefined
+  Product: undefined
 }
 
 /**
