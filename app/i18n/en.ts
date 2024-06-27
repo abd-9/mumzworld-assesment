@@ -45,7 +45,7 @@ const en = {
     componentsTab: "Components",
     debugTab: "Debug",
     communityTab: "Community",
-    podcastListTab: "Podcast",
+    productListTab: "Product",
   },
   demoCommunityScreen: {
     title: "Connect with the community",
@@ -71,7 +71,7 @@ const en = {
     hireUsLink: "Send us a message",
   },
   demoShowroomScreen: {
-    jumpStart: "Components to jump start your project!",
+    jumpStart: "Components to jump start your project11!",
     lorem2Sentences:
       "Nulla cupidatat deserunt amet quis aliquip nostrud do adipisicing. Adipisicing excepteur elit laborum Lorem adipisicing do duis.",
     demoHeaderTxExample: "Yay",

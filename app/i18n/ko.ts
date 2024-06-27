@@ -47,7 +47,7 @@ const ko: Translations = {
     componentsTab: "컴포넌트",
     debugTab: "디버그",
     communityTab: "커뮤니티",
-    podcastListTab: "팟캐스트",
+    productListTab: "팟캐스트",
   },
   demoCommunityScreen: {
     title: "커뮤니티와 함께해요",

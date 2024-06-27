@@ -33,10 +33,11 @@ import {
 } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
+import { Episode } from "../models/Episode"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
-import { Product } from "app/models/Product/Product"
+import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 
 const ICON_SIZE = 14
 
@@ -45,9 +46,9 @@ const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
 const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
 const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
-export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer(
+export const DemoPodcastListScreen: FC<DemoTabScreenProps<"DemoPodcastList">> = observer(
   function DemoPodcastListScreen(_props) {
-    const { productStore } = useStores()
+    const { episodeStore } = useStores()
 
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -56,15 +57,15 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        await productStore.fetchProducts()
+        await episodeStore.fetchEpisodes()
         setIsLoading(false)
       })()
-    }, [productStore])
+    }, [episodeStore])
 
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([productStore.fetchProducts(), delay(750)])
+      await Promise.all([episodeStore.fetchEpisodes(), delay(750)])
       setRefreshing(false)
     }
 
@@ -74,10 +75,10 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
         safeAreaEdges={["top"]}
         contentContainerStyle={$screenContentContainer}
       >
-        <ListView<Product>
+        <ListView<Episode>
           contentContainerStyle={$listContentContainer}
-          data={productStore.products}
-          extraData={productStore.favorites.length + productStore.products.length}
+          data={episodeStore.episodesForList.slice()}
+          extraData={episodeStore.favorites.length + episodeStore.episodes.length}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
@@ -89,16 +90,16 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
                 preset="generic"
                 style={$emptyState}
                 headingTx={
-                  productStore.favoritesOnly
+                  episodeStore.favoritesOnly
                     ? "demoPodcastListScreen.noFavoritesEmptyState.heading"
                     : undefined
                 }
                 contentTx={
-                  productStore.favoritesOnly
+                  episodeStore.favoritesOnly
                     ? "demoPodcastListScreen.noFavoritesEmptyState.content"
                     : undefined
                 }
-                button={productStore.favoritesOnly ? "" : undefined}
+                button={episodeStore.favoritesOnly ? "" : undefined}
                 buttonOnPress={manualRefresh}
                 imageStyle={$emptyStateImage}
                 ImageProps={{ resizeMode: "contain" }}
@@ -108,12 +109,12 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
           ListHeaderComponent={
             <View style={$heading}>
               <Text preset="heading" tx="demoPodcastListScreen.title" />
-              {(productStore.favoritesOnly || productStore.episodesForList.length > 0) && (
+              {(episodeStore.favoritesOnly || episodeStore.episodesForList.length > 0) && (
                 <View style={$toggle}>
                   <Toggle
-                    value={productStore.favoritesOnly}
+                    value={episodeStore.favoritesOnly}
                     onValueChange={() =>
-                      productStore.setProp("favoritesOnly", !productStore.favoritesOnly)
+                      episodeStore.setProp("favoritesOnly", !episodeStore.favoritesOnly)
                     }
                     variant="switch"
                     labelTx="demoPodcastListScreen.onlyFavorites"
@@ -126,11 +127,10 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
             </View>
           }
           renderItem={({ item }) => (
-            <ProductCard
-              product={item}
-              // isFavorite={productStore.hasFavorite(item)}
-              isFavorite={false}
-              onPressFavorite={() => productStore.toggleFavorite(item)}
+            <EpisodeCard
+              episode={item}
+              isFavorite={episodeStore.hasFavorite(item)}
+              onPressFavorite={() => episodeStore.toggleFavorite(item)}
             />
           )}
         />
@@ -139,21 +139,20 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
   },
 )
 
-const ProductCard = observer(function ProductCard({
-  product,
+const EpisodeCard = observer(function EpisodeCard({
+  episode,
   isFavorite,
   onPressFavorite,
 }: {
-  product: Product
+  episode: Episode
   onPressFavorite: () => void
   isFavorite: boolean
 }) {
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
-  // const imageUri = useMemo<ImageSourcePropType>(() => {
-  //   return
-  //   // return rnrImages[Math.floor(Math.random() * rnrImages.length)]
-  // }, [])
+  const imageUri = useMemo<ImageSourcePropType>(() => {
+    return rnrImages[Math.floor(Math.random() * rnrImages.length)]
+  }, [])
 
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {
@@ -179,17 +178,21 @@ const ProductCard = observer(function ProductCard({
     }
   })
 
+  /**
+   * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
+   * @see https://reactnative.dev/docs/accessibility#accessibilityactions
+   */
   const accessibilityHintProps = useMemo(
     () =>
       Platform.select<AccessibilityProps>({
         ios: {
-          accessibilityLabel: product.name,
+          accessibilityLabel: episode.title,
           accessibilityHint: translate("demoPodcastListScreen.accessibility.cardHint", {
             action: isFavorite ? "unfavorite" : "favorite",
           }),
         },
         android: {
-          accessibilityLabel: product.name,
+          accessibilityLabel: episode.title,
           accessibilityActions: [
             {
               name: "longpress",
@@ -203,7 +206,7 @@ const ProductCard = observer(function ProductCard({
           },
         },
       }),
-    [product, isFavorite],
+    [episode, isFavorite],
   )
 
   const handlePressFavorite = () => {
@@ -212,7 +215,7 @@ const ProductCard = observer(function ProductCard({
   }
 
   const handlePressCard = () => {
-    console.log("Card clicked!") // openLinkInBrowser(episode.enclosure.link)
+    openLinkInBrowser(episode.enclosure.link)
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -250,24 +253,25 @@ const ProductCard = observer(function ProductCard({
       onLongPress={handlePressFavorite}
       HeadingComponent={
         <View style={$metadata}>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={product.name}>
-            {product.categories[0]?.name}
+          <Text
+            style={$metadataText}
+            size="xxs"
+            accessibilityLabel={episode.datePublished.accessibilityLabel}
+          >
+            {episode.datePublished.textLabel}
           </Text>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={product.brand_info.title}>
-            {product.brand_info.title}
+          <Text
+            style={$metadataText}
+            size="xxs"
+            accessibilityLabel={episode.duration.accessibilityLabel}
+          >
+            {episode.duration.textLabel}
           </Text>
         </View>
       }
-      content={`${product.parsedTitleAndSubtitle.title} - ${product.parsedTitleAndSubtitle.price}`}
+      content={`${episode.parsedTitleAndSubtitle.title} - ${episode.parsedTitleAndSubtitle.subtitle}`}
       {...accessibilityHintProps}
-      RightComponent={
-        <Image
-          source={{
-            uri: "https://www.mumzworld.com/media/catalog/product/cache/8bf0fdee44d330ce9e3c910273b66bb2/p/g/pgt-std_rambler-globet-totter-tumble-the-rambler-playmat-1644490214.jpg",
-          }}
-          style={$itemThumbnail}
-        />
-      }
+      RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
       FooterComponent={
         <Button
           onPress={handlePressFavorite}
@@ -282,7 +286,7 @@ const ProductCard = observer(function ProductCard({
         >
           <Text
             size="xxs"
-            accessibilityLabel={translate("demoPodcastListScreen.unfavoriteButton")}
+            accessibilityLabel={episode.duration.accessibilityLabel}
             weight="medium"
             text={
               isFavorite

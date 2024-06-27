@@ -48,7 +48,7 @@ const fr: Translations = {
     componentsTab: "Composants",
     debugTab: "Débogage",
     communityTab: "Communauté",
-    podcastListTab: "Podcasts",
+    productListTab: "Podcasts",
   },
   demoCommunityScreen: {
     title: "Connectez-vous avec la communauté",
