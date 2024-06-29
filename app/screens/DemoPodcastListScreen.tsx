@@ -1,46 +1,15 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo } from "react"
-import {
-  AccessibilityProps,
-  ActivityIndicator,
-  Image,
-  ImageSourcePropType,
-  ImageStyle,
-  Platform,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native"
+import React, { FC, useEffect } from "react"
+import { ActivityIndicator, ImageStyle, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated"
-import {
-  Button,
-  ButtonAccessoryProps,
-  Card,
-  EmptyState,
-  Icon,
-  ListView,
-  Screen,
-  Text,
-  Toggle,
-} from "../components"
+import { Screen, Text, Toggle, EmptyState, ListView } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { Product } from "app/models/ProductList/Product"
-
-const ICON_SIZE = 14
-
-// const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
+import ProductCard from "app/components/ProductCard"
 
 export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer(
   function DemoPodcastListScreen(_props) {
@@ -54,7 +23,6 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
       ;(async function load() {
         setIsLoading(true)
         await productStore.fetchProducts()
-
         setIsLoading(false)
       })()
     }, [productStore])
@@ -66,6 +34,8 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
       setRefreshing(false)
     }
 
+    const Separator = () => <View style={styles.separator} />
+
     return (
       <Screen
         preset="fixed"
@@ -73,8 +43,10 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
         contentContainerStyle={$screenContentContainer}
       >
         <ListView<Product>
+          numColumns={2}
           contentContainerStyle={$listContentContainer}
           data={productStore.products}
+          ItemSeparatorComponent={Separator}
           extraData={productStore.favorites.length + productStore.products.length}
           refreshing={refreshing}
           estimatedItemSize={200}
@@ -124,9 +96,8 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
             </View>
           }
           renderItem={({ item }) => (
-            <ProductCard
+            <_ProductCard
               product={item}
-              // isFavorite={productStore.hasFavorite(item)}
               isFavorite={false}
               onPressFavorite={() => {
                 navigation.push("ProductDetails", { id: item.id })
@@ -139,7 +110,7 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
   },
 )
 
-const ProductCard = observer(function ProductCard({
+const _ProductCard = observer(function _ProductCard({
   product,
   isFavorite,
   onPressFavorite,
@@ -148,151 +119,17 @@ const ProductCard = observer(function ProductCard({
   onPressFavorite: () => void
   isFavorite: boolean
 }) {
-  const liked = useSharedValue(isFavorite ? 1 : 0)
-
-  // const imageUri = useMemo<ImageSourcePropType>(() => {
-  //   return
-  //   // return rnrImages[Math.floor(Math.random() * rnrImages.length)]
-  // }, [])
-
-  // Grey heart
-  const animatedLikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.EXTEND),
-        },
-      ],
-      opacity: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.CLAMP),
-    }
-  })
-
-  // Pink heart
-  const animatedUnlikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: liked.value,
-        },
-      ],
-      opacity: liked.value,
-    }
-  })
-
-  const accessibilityHintProps = useMemo(
-    () =>
-      Platform.select<AccessibilityProps>({
-        ios: {
-          accessibilityLabel: product.name,
-          accessibilityHint: translate("demoPodcastListScreen.accessibility.cardHint", {
-            action: isFavorite ? "unfavorite" : "favorite",
-          }),
-        },
-        android: {
-          accessibilityLabel: product.name,
-          accessibilityActions: [
-            {
-              name: "longpress",
-              label: translate("demoPodcastListScreen.accessibility.favoriteAction"),
-            },
-          ],
-          onAccessibilityAction: ({ nativeEvent }) => {
-            if (nativeEvent.actionName === "longpress") {
-              handlePressFavorite()
-            }
-          },
-        },
-      }),
-    [product, isFavorite],
-  )
-
-  const handlePressFavorite = () => {
-    onPressFavorite()
-    liked.value = withSpring(liked.value ? 0 : 1)
-  }
-
-  const handlePressCard = () => {
-    console.log("Card clicked!") // openLinkInBrowser(episode.enclosure.link)
-  }
-
-  const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
-    () =>
-      function ButtonLeftAccessory() {
-        return (
-          <View>
-            <Animated.View
-              style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
-            >
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={colors.palette.neutral800} // dark grey
-              />
-            </Animated.View>
-            <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={colors.palette.primary400} // pink
-              />
-            </Animated.View>
-          </View>
-        )
-      },
-    [],
-  )
-
   return (
-    <Card
-      style={$item}
-      verticalAlignment="force-footer-bottom"
-      onPress={handlePressCard}
-      onLongPress={handlePressFavorite}
-      HeadingComponent={
-        <View style={$metadata}>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={product.name}>
-            {product.categories[0]?.name}
-          </Text>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={product.brand_info.title}>
-            {product.brand_info.title}
-          </Text>
-        </View>
-      }
-      content={`${product.parsedTitleAndSubtitle.title} - ${product.parsedTitleAndSubtitle.price}`}
-      {...accessibilityHintProps}
-      RightComponent={
-        <Image
-          source={{
-            uri: product.small_image.url,
-          }}
-          style={$itemThumbnail}
-          // style={{ resizeMode: "cover", width: 20, height: 20 }}
-        />
-      }
-      FooterComponent={
-        <Button
-          onPress={handlePressFavorite}
-          onLongPress={handlePressFavorite}
-          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
-          accessibilityLabel={
-            isFavorite
-              ? translate("demoPodcastListScreen.accessibility.unfavoriteIcon")
-              : translate("demoPodcastListScreen.accessibility.favoriteIcon")
-          }
-          LeftAccessory={ButtonLeftAccessory}
-        >
-          <Text
-            size="xxs"
-            accessibilityLabel={translate("demoPodcastListScreen.unfavoriteButton")}
-            weight="medium"
-            text={
-              isFavorite
-                ? translate("demoPodcastListScreen.unfavoriteButton")
-                : translate("demoPodcastListScreen.favoriteButton")
-            }
-          />
-        </Button>
-      }
+    <ProductCard
+      image={product.small_image.url}
+      description={product.name}
+      name={product.brand_info.title}
+      price={product.getPrice}
+      newPrice={product.getDiscount}
+      rating={4.5}
+      discount={product.getDiscountPersantage}
+      isNew={true}
+      onAddToCart={() => {}}
     />
   )
 })
@@ -308,22 +145,10 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.lg,
 }
 
+const $columnWrapperStyle: ViewStyle = {}
+
 const $heading: ViewStyle = {
   marginBottom: spacing.md,
-}
-
-const $item: ViewStyle = {
-  padding: spacing.md,
-  marginTop: spacing.md,
-  minHeight: 120,
-}
-
-const $itemThumbnail: ImageStyle = {
-  marginTop: spacing.sm,
-  borderRadius: 50,
-  alignSelf: "flex-start",
-  height: 50,
-  width: 50,
 }
 
 const $toggle: ViewStyle = {
@@ -332,38 +157,6 @@ const $toggle: ViewStyle = {
 
 const $labelStyle: TextStyle = {
   textAlign: "left",
-}
-
-const $iconContainer: ViewStyle = {
-  height: ICON_SIZE,
-  width: ICON_SIZE,
-  flexDirection: "row",
-  marginEnd: spacing.sm,
-}
-
-const $metadata: TextStyle = {
-  color: colors.textDim,
-  marginTop: spacing.xs,
-  flexDirection: "row",
-}
-
-const $metadataText: TextStyle = {
-  color: colors.textDim,
-  marginEnd: spacing.md,
-  marginBottom: spacing.xs,
-}
-
-const $favoriteButton: ViewStyle = {
-  borderRadius: 17,
-  marginTop: spacing.md,
-  justifyContent: "flex-start",
-  backgroundColor: colors.palette.neutral300,
-  borderColor: colors.palette.neutral300,
-  paddingHorizontal: spacing.md,
-  paddingTop: spacing.xxxs,
-  paddingBottom: 0,
-  minHeight: 32,
-  alignSelf: "flex-start",
 }
 
 const $unFavoriteButton: ViewStyle = {
@@ -378,4 +171,12 @@ const $emptyState: ViewStyle = {
 const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
 }
-// #endregion
+
+const styles = StyleSheet.create({
+  separator: {
+    height: 3,
+  },
+  columnWrapper: {
+    marginHorizontal: 22, // Add horizontal margin to each item
+  },
+})
