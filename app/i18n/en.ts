@@ -5,6 +5,7 @@ const en = {
     back: "Back",
     logOut: "Log Out",
   },
+  card: { yalla: "Yalla" },
   welcomeScreen: {
     postscript:
       "psst  — This probably isn't what your app looks like. (Unless your designer handed you these screens, and in that case, ship it!)",
@@ -100,7 +101,7 @@ const en = {
       "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
   },
   demoPodcastListScreen: {
-    title: "React Native Radio episodes",
+    title: "Products",
     onlyFavorites: "Only Show Favorites",
     favoriteButton: "Favorite",
     unfavoriteButton: "Unfavorite",

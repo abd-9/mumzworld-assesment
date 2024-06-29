@@ -108,6 +108,28 @@ export const ProductModel = types
     get parsedTitleAndSubtitle() {
       return { title: product.name, price: product.price }
     },
+    get isYalla() {
+      return product.is_yalla.length > 0
+    },
+    get getPrice() {
+      return (
+        product.price.regularPrice.amount.currency +
+        " " +
+        product.price.regularPrice.amount.value.toFixed(2)
+      )
+    },
+    get getDiscount() {
+      if (product.base_price_range.minimum_price.final_price)
+        return (
+          product.base_price_range.minimum_price.final_price.currency +
+          " " +
+          product.base_price_range.minimum_price.final_price.value
+        )
+      else return ""
+    },
+    get getDiscountPersantage() {
+      return product.base_price_range.minimum_price.discount?.percent_off
+    },
   }))
 
 export interface Product extends Instance<typeof ProductModel> {}

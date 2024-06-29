@@ -1,6 +1,4 @@
-// TODO: write documentation for colors and palette in own markdown file and add links from here
-
-const palette = {
+export const palette = {
   neutral100: "#FFFFFF",
   neutral200: "#F4F2F1",
   neutral300: "#D7CEC9",
@@ -37,12 +35,158 @@ const palette = {
   overlay50: "rgba(25, 16, 21, 0.5)",
 } as const
 
+export const semanticColors = {
+  fg: {
+    /**
+     * This is the darkest gray and default text color.
+     */
+    text: "#27272a",
+    /**
+     * This is a little lighter gray.
+     */
+    textWeak: "#71717a",
+    /**
+     * The lightest of all the grays.
+     */
+    textDisabled: "#d4d4d8",
+    /**
+     * White text for dark backgrounds.
+     */
+    textInvert: "#ffffff",
+    /**
+     * Brand primary color on icons.
+     */
+    icon: "#0070BE",
+    /**
+     * Accent color used for important information and promo banners.
+     */
+    accent: "#C30045",
+    /**
+     * Accent color used for hyperlinks.
+     */
+    link: "#0583F2",
+    /**
+     * Used for success copy text.
+     */
+    success: "#1ac057",
+    /**
+     * Used for attention and warnings.
+     */
+    attention: "#c88a04",
+    /**
+     * Used for error text.
+     */
+    error: "#f67416",
+  },
+  bg: {
+    /**
+     * Used when an action or navigation is on a subtle background.
+     */
+    muted: "#e4e4e7",
+    /**
+     * Used as a background color in components such as Page and Frame backgrounds.
+     */
+    subtle: "#f4f4f5",
+    /**
+     * Default background color for the whole website.
+     */
+    white: "#ffffff",
+    /**
+     * Primary background color.
+     */
+    primary: "#fd6b6b",
+    /**
+     * Primary light background color.
+     */
+    primaryLight: "#fef1f1",
+    /**
+     * Secondary background color.
+     */
+    secondary: "#0583F2",
+    /**
+     * Light version of the secondary background color.
+     */
+    secondaryLight: "#23468C",
+  },
+  support: {
+    /**
+     * Cyan support color.
+     */
+    cyan: "#C7E3FC",
+    /**
+     * Light cyan support color.
+     */
+    cyanLight: "#EFF7FF",
+    /**
+     * Dark cyan support color.
+     */
+    cyanDark: "#04ADBF",
+    /**
+     * Lime support color.
+     */
+    lime: "#026873",
+    /**
+     * Light lime support color.
+     */
+    limeLight: "#BEEDF2",
+    /**
+     * Dark lime support color.
+     */
+    limeDark: "#ECFDFF",
+    /**
+     * Yellow support color.
+     */
+    yellow: "#F1BE71",
+    /**
+     * Light yellow support color.
+     */
+    yellowLight: "#864E0E",
+    /**
+     * Dark yellow support color.
+     */
+    yellowDark: "#FCF2E3",
+  },
+  feedback: {
+    /**
+     * Color for UI elements related to errors.
+     */
+    errorLight: "#ffedd6",
+    /**
+     * Color for UI elements related to errors.
+     */
+    error: "#f67416",
+    /**
+     * Dark color for UI elements related to errors.
+     */
+    errorDark: "#9b3b12",
+    /**
+     * Background color for UI elements related to success.
+     */
+    successLight: "#defce9",
+    /**
+     * Color for UI elements related to success.
+     */
+    success: "#1ac057",
+    /**
+     * Dark color for UI elements related to success.
+     */
+    successDark: "#1c713c",
+    /**
+     * Color for UI elements related to warning.
+     */
+    warningLight: "#fef9c3",
+    /**
+     * Color for UI elements related to warning.
+     */
+    warning: "#e7b008",
+    /**
+     * Dark color for UI elements related to warning.
+     */
+    warningDark: "#864E0E",
+  },
+} as const
+
 export const colors = {
-  /**
-   * The palette is available to use, but prefer using the name.
-   * This is only included for rare, one-off cases. Try to use
-   * semantic names as much as possible.
-   */
   palette,
   /**
    * A helper for making something see-thru.
@@ -51,7 +195,7 @@ export const colors = {
   /**
    * The default text color in many components.
    */
-  text: palette.neutral800,
+  text: semanticColors.fg.text,
   /**
    * Secondary text information.
    */
@@ -59,7 +203,7 @@ export const colors = {
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral200,
+  background: semanticColors.bg.primaryLight,
   /**
    * The default border color.
    */
@@ -75,10 +219,9 @@ export const colors = {
   /**
    * Error messages.
    */
-  error: palette.angry500,
+  error: semanticColors.feedback.error,
   /**
    * Error Background.
-   *
    */
-  errorBackground: palette.angry100,
-}
+  errorBackground: semanticColors.feedback.errorLight,
+} as const
