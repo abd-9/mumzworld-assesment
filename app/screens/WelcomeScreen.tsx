@@ -9,7 +9,7 @@ import { colors, spacing } from "../theme"
 import { useHeader } from "../utils/useHeader"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
-const welcomeLogo = require("../../assets/images/logo.png")
+const welcomeLogo = require("../../assets/images/splash-logo-all.png")
 const welcomeFace = require("../../assets/images/welcome-face.png")
 
 interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
@@ -49,8 +49,13 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
       </View>
 
       <View style={[$bottomContainer, $bottomContainerInsets]}>
-        <Text tx="welcomeScreen.postscript" size="md" />
-
+        <View>
+          <Text style={{ fontWeight: "800" }} size="md">
+            Features
+          </Text>
+          <Text tx="welcomeScreen.content1" size="md" />
+          <Text tx="welcomeScreen.content2" size="md" />
+        </View>
         <Button
           testID="next-screen-button"
           preset="reversed"

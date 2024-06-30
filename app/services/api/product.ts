@@ -10,7 +10,7 @@ export class ProductApi extends Api {
     super(config)
   }
   async getProducts(): Promise<{ kind: "ok"; products: ProductSnapshotIn[] } | GeneralApiProblem> {
-    const response: ApiResponse<ApiProductsResponse> = await this.apisauce.get(`product-list-lite`)
+    const response: ApiResponse<ApiProductsResponse> = await this.apisauce.get(`product-list-large`)
 
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)
