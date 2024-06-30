@@ -47,7 +47,7 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
           ItemSeparatorComponent={Separator}
           extraData={productStore.favorites.length + productStore.products.length}
           refreshing={refreshing}
-          estimatedItemSize={600}
+          estimatedItemSize={500}
           onRefresh={manualRefresh}
           ListEmptyComponent={
             isLoading ? (

@@ -10,13 +10,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 import { Button, EmptyState, Icon, Screen } from "../components"
-import { isRTL } from "../i18n"
+import { isRTL, setLanguage } from "../i18n"
 import { useStores } from "../models"
 import { semanticColors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { AppStackScreenProps, navigationRef } from "app/navigators"
 import { ProductDetails } from "app/models/ProductList/Product"
 import { Text } from "native-base"
+import I18n from "i18n-js"
 interface ProductScreenProps extends AppStackScreenProps<"ProductDetails"> {}
 
 export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function ProductDetailsScreen(
@@ -112,7 +113,12 @@ const ProductDetailsComponent = observer(function ProductCard({
         <Text style={styles.smallText}>{product.meta_description}</Text>
       </Animated.View>
       <View style={styles.addToCartContainer}>
-        <Button style={styles.addToCartButton} onPress={() => {}}>
+        <Button
+          style={styles.addToCartButton}
+          onPress={() => {
+            I18n.locale == "en" ? setLanguage("ar") : setLanguage("en")
+          }}
+        >
           <Text fontWeight={900} bold>
             Add to Cart
           </Text>

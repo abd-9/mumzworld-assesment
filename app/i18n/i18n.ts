@@ -58,4 +58,6 @@ type RecursiveKeyOfHandleValue<TValue, Text extends string> = TValue extends any
 
 export const setLanguage = (language: "en" | "ar") => {
   i18n.locale = language
+  I18nManager.allowRTL(language == "ar")
+  I18nManager.forceRTL(language == "ar")
 }
