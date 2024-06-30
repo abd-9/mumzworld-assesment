@@ -2,6 +2,11 @@
   "name": "mumzworld-assesment",
   "displayName": "mumzworld-assesment",
   "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "31a23341-324b-412e-b9d8-42d04162d06d"
+      }
+    },
     "name": "mumzworld-assesment",
     "slug": "mumzworld-assesment",
     "scheme": "mumzworld-assesment",
