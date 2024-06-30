@@ -67,7 +67,7 @@ interface ComplexTextValue {
 }
 
 interface ProductReviews {
-  items: any[] // Define a proper interface if needed
+  items: any[]
   page_info: {
     page_size: number
     total_pages: number
@@ -102,7 +102,7 @@ interface ProductDetailsResponse {
     disabled: boolean
     file: string
     id: number
-    label: any // Define a proper interface if needed
+    label: any
     position: number
     __typename: string
   }[]
@@ -125,7 +125,7 @@ interface ProductDetailsResponse {
   recom_age: string
   review_count: number
   reviews: ProductReviews
-  shipping_weight?: any // Define a proper interface if needed
+  shipping_weight?: any
   sku: string
   small_image: ProductImage
   stock_status: string
@@ -135,7 +135,7 @@ interface ProductDetailsResponse {
   url_suffix?: string
   type_id?: string
   __typename: string
-  options?: any // Define a proper interface if needed
+  options?: any
 }
 
 interface SimpleProduct {

@@ -1,30 +1,10 @@
 import React, { useState } from "react"
-import {
-  AccessibilityProps,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native"
-import { Card, Title, Paragraph, Text } from "react-native-paper"
+import { Pressable, StyleSheet, View } from "react-native"
+import { Card, Title, Text } from "react-native-paper"
 import { FontAwesome } from "@expo/vector-icons"
-import Animated, {
-  BounceIn,
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated"
+import Animated from "react-native-reanimated"
 import RatingBar from "./Rating"
 import { random } from "lodash"
-import { ButtonAccessoryProps } from "./Button"
-import { colors, spacing } from "app/theme"
-import { Icon } from "./Icon"
-import { translate } from "app/i18n"
-// import { Rating } from "react-native-ratings"
 
 interface ProductCardProps {
   image: string
@@ -65,7 +45,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* {isNew && <Text style={styles.newLabel}>New</Text>} */}
       </View>
       <Pressable onPress={onItemPress}>
-        <Card.Cover source={{ uri: image }} style={styles.coverImage} />
+        <Animated.Image
+          sharedTransitionTag="image-porduct-1"
+          source={{ uri: image }}
+          style={styles.coverImage}
+        ></Animated.Image>
       </Pressable>
       <View style={styles.favoriteIconContainer}>
         <FontAwesome

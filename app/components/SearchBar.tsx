@@ -1,13 +1,8 @@
 // AnimatedSearchBar.tsx
-import React, { useState } from "react"
-import { StyleSheet, View, TextInput, Pressable, Dimensions } from "react-native"
-import { IconButton, useTheme } from "react-native-paper"
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated"
+import React from "react"
+import { StyleSheet, View, TextInput } from "react-native"
+import { IconButton } from "react-native-paper"
+import Animated, { useAnimatedStyle } from "react-native-reanimated"
 
 interface AnimatedSearchBarProps {
   placeholder?: string
@@ -20,58 +15,57 @@ const AnimatedSearchBar: React.FC<AnimatedSearchBarProps> = ({
   onChangeText,
   value,
 }) => {
-  const [isFocused, setIsFocused] = useState(false)
-  const screenWidth = Dimensions.get("window").width
-  const expandedWidth = screenWidth - 40
-  const width = useSharedValue(50)
-  const handleFocus = () => {
-    setIsFocused(true)
-    width.value = withTiming(expandedWidth, {
-      // should take the full width
-      duration: 300,
-      easing: Easing.out(Easing.exp),
-    })
-  }
+  // const [isFocused, setIsFocused] = useState(false)
+  // const screenWidth = Dimensions.get("window").width
+  // const expandedWidth = screenWidth - 40
+  // const width = useSharedValue("100%")
+  // const handleFocus = () => {
+  //   setIsFocused(true)
+  //   width.value = withTiming(expandedWidth, {
+  //     // should take the full width
+  //     duration: 300,
+  //     easing: Easing.out(Easing.exp),
+  //   })
+  // }
 
-  const handleBlur = () => {
-    setIsFocused(false)
-    width.value = withTiming(50, {
-      duration: 300,
-      easing: Easing.out(Easing.exp),
-    })
-  }
+  // const handleBlur = () => {
+  //   setIsFocused(false)
+  //   width.value = withTiming(50, {
+  //     duration: 300,
+  //     easing: Easing.out(Easing.exp),
+  //   })
+  // }
 
   const animatedStyle = useAnimatedStyle(() => ({
-    width: width.value,
+    width: "100%", //width.value,
   }))
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={handleFocus}>
-        <Animated.View style={[styles.searchContainer, animatedStyle]}>
-          <IconButton icon="magnify" size={20} />
-          <TextInput
-            style={styles.input}
-            placeholder={placeholder}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChangeText={onChangeText}
-            value={value}
+      {/* <Pressable onPress={handleFocus}> */}
+      <Animated.View style={[styles.searchContainer, animatedStyle]}>
+        <IconButton icon="magnify" size={20} />
+        <TextInput
+          style={styles.input}
+          placeholder={placeholder}
+          // onFocus={handleFocus}
+          // onBlur={handleBlur}
+          onChangeText={onChangeText}
+          value={value}
+        />
+        {value && value?.length > 0 && (
+          <IconButton
+            icon="close"
+            size={20}
+            onPress={() => {
+              if (onChangeText) {
+                onChangeText("")
+              }
+            }}
           />
-          {isFocused && (
-            <IconButton
-              icon="close"
-              size={20}
-              onPress={() => {
-                if (onChangeText) {
-                  onChangeText("")
-                }
-                handleBlur()
-              }}
-            />
-          )}
-        </Animated.View>
-      </Pressable>
+        )}
+      </Animated.View>
+      {/* </Pressable> */}
     </View>
   )
 }

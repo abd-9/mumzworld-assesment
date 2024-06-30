@@ -1,42 +1,25 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo, useState } from "react"
-import {
-  AccessibilityProps,
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  ImageSourcePropType,
-  ImageStyle,
-  Platform,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native"
-import { type ContentStyle } from "@shopify/flash-list"
+import React, { FC, useEffect } from "react"
+import { ActivityIndicator, ImageStyle, Platform, StyleSheet, View, ViewStyle } from "react-native"
 import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
+  Easing,
+  FadeInDown,
+  FadeInRight,
+  Layout,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated"
-import { Button, EmptyState, Icon, ListView, Screen, Toggle } from "../components"
-import { isRTL, translate } from "../i18n"
+import { Button, EmptyState, Icon, Screen } from "../components"
+import { isRTL } from "../i18n"
 import { useStores } from "../models"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
-import { colors, semanticColors, spacing } from "../theme"
+import { semanticColors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { AppStackScreenProps, navigationRef } from "app/navigators"
-import { Product, ProductDetails } from "app/models/ProductList/Product"
-import { Surface } from "react-native-paper"
+import { ProductDetails } from "app/models/ProductList/Product"
 import { Text } from "native-base"
 interface ProductScreenProps extends AppStackScreenProps<"ProductDetails"> {}
 
-const HEADER_HEIGHT = 300
-export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function DemoPodcastListScreen(
+export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function ProductDetailsScreen(
   _props,
 ) {
   const { id: productID } = _props.route.params
@@ -44,7 +27,6 @@ export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function De
   const [refreshing, setRefreshing] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
 
-  // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     ;(async function load() {
       setIsLoading(true)
@@ -54,7 +36,6 @@ export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function De
     })()
   }, [productDetailsStore, productID])
 
-  // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
     setRefreshing(true)
     await Promise.all([productDetailsStore.fetchProduct(productID), delay(750)])
@@ -100,12 +81,18 @@ const ProductDetailsComponent = observer(function ProductCard({
   onPressFavorite?: () => void
   isFavorite?: boolean
 }) {
+  const opacity = useSharedValue(0)
+  React.useEffect(() => {
+    opacity.value = withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) })
+  }, [])
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Animated.Image
           source={{ uri: product.small_image.url }}
-          style={[styles.image, { transform: [{ scale: 1 }] }]}
+          style={[styles.image]}
+          entering={FadeInRight}
+          layout={Layout.duration(2000).delay(200)}
         />
       </View>
       <View style={styles.backButton}>
@@ -114,7 +101,7 @@ const ProductDetailsComponent = observer(function ProductCard({
       <View style={styles.fab}>
         <Icon icon="heart" onPress={() => {}} />
       </View>
-      <View style={[styles.descriptionContainer, { flex: 1 }]}>
+      <Animated.View entering={FadeInDown} style={[styles.descriptionContainer, { flex: 1 }]}>
         <View style={styles.titlePriceContainer}>
           <Text style={styles.titleText}>{product.name}</Text>
           <Text style={styles.priceText}>
@@ -122,10 +109,8 @@ const ProductDetailsComponent = observer(function ProductCard({
             {product.base_price_range.minimum_price.regular_price.value}
           </Text>
         </View>
-
         <Text style={styles.smallText}>{product.meta_description}</Text>
-      </View>
-
+      </Animated.View>
       <View style={styles.addToCartContainer}>
         <Button style={styles.addToCartButton} onPress={() => {}}>
           <Text fontWeight={900} bold>

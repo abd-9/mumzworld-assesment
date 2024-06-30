@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite"
 import React, { FC, useEffect } from "react"
-import { ActivityIndicator, ImageStyle, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, StyleSheet, View, ViewStyle } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import { Screen, Text, Toggle, EmptyState, ListView } from "../components"
-import { isRTL, translate } from "../i18n"
+import { Screen, Text, EmptyState, ListView } from "../components"
+import { isRTL } from "../i18n"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { spacing } from "../theme"
@@ -77,21 +77,6 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
             <View style={$heading}>
               <Text preset="heading" tx="demoPodcastListScreen.title" />
               <AnimatedSearchBar placeholder="Search..." value={""} onChangeText={() => {}} />
-              {(productStore.favoritesOnly || productStore.episodesForList.length > 0) && (
-                <View style={$toggle}>
-                  <Toggle
-                    value={productStore.favoritesOnly}
-                    onValueChange={() =>
-                      productStore.setProp("favoritesOnly", !productStore.favoritesOnly)
-                    }
-                    variant="switch"
-                    labelTx="demoPodcastListScreen.onlyFavorites"
-                    labelPosition="left"
-                    labelStyle={$labelStyle}
-                    accessibilityLabel={translate("demoPodcastListScreen.accessibility.switch")}
-                  />
-                </View>
-              )}
             </View>
           }
           renderItem={({ item }) => (
@@ -150,14 +135,6 @@ const $heading: ViewStyle = {
   marginBottom: spacing.md,
 }
 
-const $toggle: ViewStyle = {
-  marginTop: spacing.md,
-}
-
-const $labelStyle: TextStyle = {
-  textAlign: "left",
-}
-
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,
 }
@@ -169,9 +146,9 @@ const $emptyStateImage: ImageStyle = {
 const styles = StyleSheet.create({
   separator: {
     height: 31,
-    width: 11, //spacing.md,
+    width: 11,
   },
   columnWrapper: {
-    marginHorizontal: 10, // Add horizontal margin to each item
+    marginHorizontal: 10,
   },
 })

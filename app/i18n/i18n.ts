@@ -55,3 +55,7 @@ type RecursiveKeyOfHandleValue<TValue, Text extends string> = TValue extends any
   : TValue extends object
   ? Text | `${Text}${RecursiveKeyOfInner<TValue>}`
   : Text
+
+export const setLanguage = (language: "en" | "ar") => {
+  i18n.locale = language
+}

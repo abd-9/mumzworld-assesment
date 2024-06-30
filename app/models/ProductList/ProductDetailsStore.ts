@@ -1,5 +1,5 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
-import { Product, ProductDetailsModel, ProductModel } from "./Product"
+import { Product, ProductDetailsModel } from "./Product"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { productApi } from "app/services/api/product"
 

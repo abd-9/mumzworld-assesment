@@ -2,6 +2,7 @@
 const plugins = [
   /** react-native-reanimated web support @see https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation/#web */
   "@babel/plugin-proposal-export-namespace-from",
+  "react-native-reanimated/plugin",
 ]
 
 /** @type {import('@babel/core').TransformOptions} */

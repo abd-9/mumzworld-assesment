@@ -12,31 +12,8 @@ const MediaGalleryEntry = types.model("MediaGalleryEntry", {
   position: types.number,
 })
 
-// Category model
-const Category = types.model("Category", {
-  id: types.identifierNumber,
-  name: types.string,
-  url_path: types.string,
-})
 interface Price {
   amount: Money
-}
-
-interface CategoryBase {
-  id: number
-  name: string
-  url_path: string
-}
-
-interface BrandInfoBase {
-  img_src: string
-  title: string
-  url: string
-}
-
-interface PriceBase {
-  currency: string
-  value: number
 }
 interface ProductPrice {
   discount?: {

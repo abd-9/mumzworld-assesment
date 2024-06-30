@@ -1,7 +1,7 @@
 // ProductApi.ts
 import { ApiResponse } from "apisauce"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiFeedResponse } from "./api.types"
+import type { ApiConfig } from "./api.types"
 import { DEFAULT_API_CONFIG, Api } from "./api"
 import { ProductDetailsSnapshotIn, ProductSnapshotIn } from "app/models/ProductList/Product"
 
