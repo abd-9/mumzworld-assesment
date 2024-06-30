@@ -86,3 +86,6 @@ web-build/
 !env.js
 
 /coverage
+
+# Ignore Gradle build output directory
+build
