@@ -17,7 +17,8 @@ import { delay } from "../utils/delay"
 import { AppStackScreenProps, navigationRef } from "app/navigators"
 import { ProductDetails } from "app/models/ProductList/Product"
 import { Text } from "native-base"
-import I18n from "i18n-js"
+import i18n from "app/i18n/i18n"
+
 interface ProductScreenProps extends AppStackScreenProps<"ProductDetails"> {}
 
 export const ProductDetailsScreen: FC<ProductScreenProps> = observer(function ProductDetailsScreen(
@@ -116,11 +117,11 @@ const ProductDetailsComponent = observer(function ProductCard({
         <Button
           style={styles.addToCartButton}
           onPress={() => {
-            I18n.locale == "en" ? setLanguage("ar") : setLanguage("en")
+            i18n.locale == "en" ? setLanguage("ar") : setLanguage("en")
           }}
         >
           <Text fontWeight={900} bold>
-            Add to Cart
+            Change languge
           </Text>
         </Button>
       </View>
@@ -139,7 +140,7 @@ const $emptyState: ViewStyle = {
 const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
 }
-// #endregion
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -148,7 +149,8 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     top: 16,
-    left: 16,
+    left: isRTL ? "auto" : 16,
+    right: isRTL ? 16 : "auto",
   },
   image: {
     width: "98%",
@@ -164,7 +166,8 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     top: 16,
-    right: 16,
+    right: isRTL ? "auto" : 16,
+    left: isRTL ? 16 : "auto",
     width: 50,
     height: 50,
     justifyContent: "center",
@@ -183,8 +186,8 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingHorizontal: spacing.sm,
     backgroundColor: semanticColors.bg.subtle,
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    borderTopLeftRadius: isRTL ? 0 : 40,
+    borderTopRightRadius: isRTL ? 40 : 0,
     borderWidth: 2,
     borderColor: semanticColors.fg.textDisabled,
     ...Platform.select({
@@ -209,15 +212,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     flex: 1,
+    textAlign: isRTL ? "right" : "left",
   },
   priceText: {
     fontSize: 18,
     color: "green",
+    textAlign: isRTL ? "left" : "right",
   },
   smallText: {
     paddingHorizontal: 16,
     marginTop: 8,
     color: "gray",
+    textAlign: isRTL ? "right" : "left",
   },
   addToCartContainer: {
     position: "absolute",
