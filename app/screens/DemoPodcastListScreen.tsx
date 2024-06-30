@@ -6,10 +6,11 @@ import { Screen, Text, Toggle, EmptyState, ListView } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
-import { colors, spacing } from "../theme"
+import { spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { Product } from "app/models/ProductList/Product"
 import ProductCard from "app/components/ProductCard"
+import AnimatedSearchBar from "app/components/SearchBar"
 
 export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer(
   function DemoPodcastListScreen(_props) {
@@ -17,8 +18,6 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
     const navigation = _props.navigation
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
-
-    // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
@@ -27,7 +26,6 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
       })()
     }, [productStore])
 
-    // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
       await Promise.all([productStore.fetchProducts(), delay(750)])
@@ -78,6 +76,7 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
           ListHeaderComponent={
             <View style={$heading}>
               <Text preset="heading" tx="demoPodcastListScreen.title" />
+              <AnimatedSearchBar placeholder="Search..." value={""} onChangeText={() => {}} />
               {(productStore.favoritesOnly || productStore.episodesForList.length > 0) && (
                 <View style={$toggle}>
                   <Toggle
@@ -97,11 +96,10 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
           }
           renderItem={({ item }) => (
             <_ProductCard
+              onPress={() => navigation.push("ProductDetails", { id: item.id })}
               product={item}
               isFavorite={false}
-              onPressFavorite={() => {
-                navigation.push("ProductDetails", { id: item.id })
-              }}
+              onPressFavorite={() => {}}
             />
           )}
         />
@@ -112,11 +110,11 @@ export const ProductListScreen: FC<DemoTabScreenProps<"ProductList">> = observer
 
 const _ProductCard = observer(function _ProductCard({
   product,
-  isFavorite,
-  onPressFavorite,
+  onPress,
 }: {
   product: Product
   onPressFavorite: () => void
+  onPress: (productId: number) => void
   isFavorite: boolean
 }) {
   return (
@@ -129,6 +127,9 @@ const _ProductCard = observer(function _ProductCard({
       rating={4.5}
       discount={product.getDiscountPersantage}
       isNew={true}
+      onItemPress={() => {
+        onPress(product.id)
+      }}
       onAddToCart={() => {}}
     />
   )
@@ -145,8 +146,6 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.lg,
 }
 
-const $columnWrapperStyle: ViewStyle = {}
-
 const $heading: ViewStyle = {
   marginBottom: spacing.md,
 }
@@ -159,11 +158,6 @@ const $labelStyle: TextStyle = {
   textAlign: "left",
 }
 
-const $unFavoriteButton: ViewStyle = {
-  borderColor: colors.palette.primary100,
-  backgroundColor: colors.palette.primary100,
-}
-
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,
 }
@@ -174,9 +168,10 @@ const $emptyStateImage: ImageStyle = {
 
 const styles = StyleSheet.create({
   separator: {
-    height: 3,
+    height: 31,
+    width: 11, //spacing.md,
   },
   columnWrapper: {
-    marginHorizontal: 22, // Add horizontal margin to each item
+    marginHorizontal: 10, // Add horizontal margin to each item
   },
 })

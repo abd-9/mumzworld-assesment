@@ -1,5 +1,13 @@
 import React, { useState } from "react"
-import { AccessibilityProps, Platform, StyleSheet, TextStyle, View, ViewStyle } from "react-native"
+import {
+  AccessibilityProps,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
 import { Card, Title, Paragraph, Text } from "react-native-paper"
 import { FontAwesome } from "@expo/vector-icons"
 import Animated, {
@@ -29,6 +37,7 @@ interface ProductCardProps {
   newPrice?: string
   isNew?: boolean
   onAddToCart: () => void
+  onItemPress: () => void
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -41,6 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   discount,
   isNew,
   onAddToCart,
+  onItemPress,
 }) => {
   const [isFavorite, setIsFavorite] = useState(false)
 
@@ -54,7 +64,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {discount && discount > 0 && <Text style={styles.discountLabel}>-{discount}%</Text>}
         {/* {isNew && <Text style={styles.newLabel}>New</Text>} */}
       </View>
-      <Card.Cover source={{ uri: image }} style={styles.coverImage} />
+      <Pressable onPress={onItemPress}>
+        <Card.Cover source={{ uri: image }} style={styles.coverImage} />
+      </Pressable>
       <View style={styles.favoriteIconContainer}>
         <FontAwesome
           name={isFavorite ? "heart" : "heart-o"}
@@ -63,23 +75,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onPress={handleFavoriteToggle}
         />
       </View>
-      <Card.Content>
-        <RatingBar rating={random(2, 5, true)} size={20} />
-        <Title style={styles.title}>{name}</Title>
-        <Text numberOfLines={2} style={styles.description}>
-          {description}
-        </Text>
-        <View style={styles.priceContainer}>
-          {newPrice ? (
-            <>
-              <Text style={styles.oldPrice}> {price}</Text>
-              <Text style={styles.price}> {newPrice}</Text>
-            </>
-          ) : (
-            <Text style={styles.price}>{price}</Text>
-          )}
-        </View>
-      </Card.Content>
+      <Pressable onPress={onItemPress}>
+        <Card.Content>
+          <RatingBar rating={random(2, 5, true)} size={20} />
+          <Title style={styles.title}>{name}</Title>
+          <Text numberOfLines={2} style={styles.description}>
+            {description}
+          </Text>
+          <View style={styles.priceContainer}>
+            {newPrice ? (
+              <>
+                <Text style={styles.oldPrice}> {price}</Text>
+                <Text style={styles.price}> {newPrice}</Text>
+              </>
+            ) : (
+              <Text style={styles.price}>{price}</Text>
+            )}
+          </View>
+        </Card.Content>
+      </Pressable>
     </View>
   )
 }
@@ -87,9 +101,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     margin: 0,
-    paddingHorizontal: 0,
-    marginBottom: 10,
-    // backgroundColor: colors.border,
+    paddingHorizontal: 2,
+    marginBottom: 0,
     borderRadius: 15,
     width: "100%",
   },
